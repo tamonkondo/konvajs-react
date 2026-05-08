@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react"
 
 import { DEFAULT_FILTERS, STAGE_SIZE } from "../constants"
-import type { EditorElement, FilterState, ImageAsset, StampType } from "../types"
+import type { EditorElement, FilterState, ImageAsset, StampElement, StampType, TextElement } from "../types"
 import { createElementId, readImageFile } from "../utils"
 
-type UpdateElementPayload = Partial<Omit<EditorElement, "id" | "type">>
+type UpdateElementPayload = Partial<Omit<TextElement, "id" | "type"> & Omit<StampElement, "id" | "type">>
 
 const DEFAULT_TEXT = {
   text: "New text",

@@ -77,6 +77,7 @@ export function EditorPage() {
               stageSize={editor.stageSize}
               onSelect={editor.setSelectedId}
               onElementChange={editor.updateElement}
+              onImageDrop={editor.uploadImage}
             />
           </section>
 
