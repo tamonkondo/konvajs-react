@@ -1,10 +1,14 @@
 
-function App() {
+import { Navigate, Route, Routes } from "react-router"
 
+import { EditorPage } from "./pages/editor/EditorPage"
+
+function App() {
   return (
-    <>
-test
-    </>
+    <Routes>
+      <Route path="/" element={<EditorPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 
