@@ -27,7 +27,8 @@ export function EditorPage() {
             <p className="text-sm text-muted-foreground">Upload an image, compose text and stamps, then export a PNG.</p>
           </div>
           <div className="text-right text-xs text-muted-foreground">
-            <div>Canvas 920 x 620</div>
+            <div>Canvas {Math.round(editor.stageSize.width)} x {Math.round(editor.stageSize.height)}</div>
+            {editor.imageAsset ? <div>Export {editor.imageAsset.width} x {editor.imageAsset.height}</div> : null}
             <div>{editor.elements.length} editable layers</div>
           </div>
         </header>
@@ -96,7 +97,7 @@ export function EditorPage() {
               onMove={editor.moveSelectedElement}
             />
             <Separator />
-            <DownloadControls stageRef={stageRef} disabled={!hasImage} />
+            <DownloadControls stageRef={stageRef} disabled={!hasImage} pixelRatio={editor.exportPixelRatio} />
           </aside>
         </div>
       </div>

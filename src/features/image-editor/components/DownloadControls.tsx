@@ -8,14 +8,15 @@ import { PanelSection } from "./PanelSection"
 type DownloadControlsProps = {
   stageRef: React.RefObject<Konva.Stage | null>
   disabled: boolean
+  pixelRatio: number
 }
 
-export function DownloadControls({ stageRef, disabled }: DownloadControlsProps) {
+export function DownloadControls({ stageRef, disabled, pixelRatio }: DownloadControlsProps) {
   function downloadImage() {
     const stage = stageRef.current
     if (!stage) return
 
-    const uri = stage.toDataURL({ pixelRatio: 2, mimeType: "image/png" })
+    const uri = stage.toDataURL({ pixelRatio, mimeType: "image/png" })
     const link = document.createElement("a")
     link.download = "edited-image.png"
     link.href = uri

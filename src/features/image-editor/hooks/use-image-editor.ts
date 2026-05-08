@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react"
 
-import { DEFAULT_FILTERS, STAGE_SIZE } from "../constants"
+import { DEFAULT_FILTERS } from "../constants"
 import type { EditorElement, FilterState, ImageAsset, StampElement, StampType, TextAlign, TextElement } from "../types"
-import { createElementId, readImageFile } from "../utils"
+import { createElementId, getExportPixelRatio, getImageStageSize, readImageFile } from "../utils"
 
 type UpdateElementPayload = Partial<Omit<TextElement, "id" | "type"> & Omit<StampElement, "id" | "type">>
 
@@ -30,6 +30,8 @@ export function useImageEditor() {
     () => elements.find((element) => element.id === selectedId) ?? null,
     [elements, selectedId]
   )
+  const stageSize = useMemo(() => getImageStageSize(imageAsset), [imageAsset])
+  const exportPixelRatio = useMemo(() => getExportPixelRatio(imageAsset, stageSize), [imageAsset, stageSize])
 
   async function uploadImage(file: File) {
     setError(null)
@@ -52,17 +54,18 @@ export function useImageEditor() {
 
   function addTextElement() {
     const id = createElementId("text")
+    const width = Math.max(Math.min(DEFAULT_TEXT.width, stageSize.width - 48), 80)
     setElements((current) => [
       ...current,
       {
         id,
         type: "text",
         text: textDraft.trim() || DEFAULT_TEXT.text,
-        x: STAGE_SIZE.width / 2 - 90,
-        y: STAGE_SIZE.height / 2 - 24,
+        x: stageSize.width / 2 - width / 2,
+        y: stageSize.height / 2 - textSize / 2,
         fontSize: textSize,
         fill: textFill,
-        width: DEFAULT_TEXT.width,
+        width,
         align: textAlign,
         rotation: 0,
         scaleX: 1,
@@ -81,8 +84,8 @@ export function useImageEditor() {
         type: "stamp",
         stampType,
         fill: stampFill,
-        x: STAGE_SIZE.width / 2 - 36,
-        y: STAGE_SIZE.height / 2 - 36,
+        x: stageSize.width / 2 - 36,
+        y: stageSize.height / 2 - 36,
         rotation: 0,
         scaleX: 1,
         scaleY: 1,
@@ -150,7 +153,8 @@ export function useImageEditor() {
     elements,
     selectedId,
     selectedElement,
-    stageSize: STAGE_SIZE,
+    stageSize,
+    exportPixelRatio,
     textDraft,
     textFill,
     textSize,

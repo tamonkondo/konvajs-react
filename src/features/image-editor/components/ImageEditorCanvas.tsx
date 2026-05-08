@@ -4,7 +4,6 @@ import { Arrow, Circle, Group, Image, Layer, Rect, Stage, Star, Text, Transforme
 import type { KonvaEventObject } from "konva/lib/Node"
 
 import type { EditorElement, FilterState, ImageAsset, StageSize, StampElement } from "../types"
-import { getContainedImageRect } from "../utils"
 import { useHtmlImage } from "../hooks/use-html-image"
 
 type ImageEditorCanvasProps = {
@@ -246,11 +245,6 @@ export function ImageEditorCanvas({
   const [displayScale, setDisplayScale] = useState(1)
   const [isDraggingImage, setIsDraggingImage] = useState(false)
 
-  const imageRect = useMemo(() => {
-    if (!imageAsset) return null
-    return getContainedImageRect(imageAsset, stageSize)
-  }, [imageAsset, stageSize])
-
   const activeFilters = useMemo(() => {
     const nextFilters = []
     if (filters.brightness !== 0) nextFilters.push(Konva.Filters.Brighten)
@@ -345,14 +339,14 @@ export function ImageEditorCanvas({
           >
             <Layer>
               <Rect width={stageSize.width} height={stageSize.height} fill="#ffffff" />
-              {image && imageRect ? (
+              {image ? (
                 <Image
                   ref={imageRef}
                   image={image}
-                  x={imageRect.x}
-                  y={imageRect.y}
-                  width={imageRect.width}
-                  height={imageRect.height}
+                  x={0}
+                  y={0}
+                  width={stageSize.width}
+                  height={stageSize.height}
                   filters={activeFilters}
                   brightness={filters.brightness}
                   contrast={filters.contrast}

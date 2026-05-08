@@ -1,4 +1,5 @@
 import type { ImageAsset, StageSize } from "./types"
+import { DEFAULT_STAGE_SIZE, MAX_EDIT_CANVAS_WIDTH } from "./constants"
 
 export function createElementId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`
@@ -44,4 +45,22 @@ export function getContainedImageRect(image: ImageAsset, stage: StageSize) {
     width,
     height,
   }
+}
+
+export function getImageStageSize(image: ImageAsset | null): StageSize {
+  if (!image) {
+    return DEFAULT_STAGE_SIZE
+  }
+
+  const scale = Math.min(MAX_EDIT_CANVAS_WIDTH / image.width, 1)
+
+  return {
+    width: image.width * scale,
+    height: image.height * scale,
+  }
+}
+
+export function getExportPixelRatio(image: ImageAsset | null, stage: StageSize) {
+  if (!image || stage.width === 0) return 1
+  return image.width / stage.width
 }
