@@ -52,10 +52,12 @@ export function EditorPage() {
               textDraft={editor.textDraft}
               textFill={editor.textFill}
               textSize={editor.textSize}
+              textAlign={editor.textAlign}
               disabled={!hasImage}
               onTextChange={editor.setTextDraft}
               onFillChange={editor.setTextFill}
               onSizeChange={editor.setTextSize}
+              onAlignChange={editor.setTextAlign}
               onAddText={editor.addTextElement}
             />
             <Separator />

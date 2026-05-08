@@ -1,14 +1,24 @@
+import { AlignCenter, AlignLeft, AlignRight } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
+import { Textarea } from "@/components/ui/textarea"
 
-import type { EditorElement } from "../types"
+import type { EditorElement, TextAlign } from "../types"
 import { PanelSection } from "./PanelSection"
 
 type SelectedElementControlsProps = {
   selectedElement: EditorElement | null
   onChange: (id: string, updates: Partial<EditorElement>) => void
 }
+
+const ALIGN_OPTIONS = [
+  { value: "left", label: "Left", icon: AlignLeft },
+  { value: "center", label: "Center", icon: AlignCenter },
+  { value: "right", label: "Right", icon: AlignRight },
+] satisfies Array<{ value: TextAlign; label: string; icon: typeof AlignLeft }>
 
 export function SelectedElementControls({ selectedElement, onChange }: SelectedElementControlsProps) {
   return (
@@ -23,10 +33,28 @@ export function SelectedElementControls({ selectedElement, onChange }: SelectedE
             <>
               <div className="space-y-1.5">
                 <Label>Text</Label>
-                <Input
+                <Textarea
                   value={selectedElement.text}
+                  rows={3}
                   onChange={(event) => onChange(selectedElement.id, { text: event.target.value })}
                 />
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {ALIGN_OPTIONS.map((option) => {
+                  const Icon = option.icon
+                  return (
+                    <Button
+                      key={option.value}
+                      type="button"
+                      variant={selectedElement.align === option.value ? "default" : "outline"}
+                      size="sm"
+                      aria-label={option.label}
+                      onClick={() => onChange(selectedElement.id, { align: option.value })}
+                    >
+                      <Icon />
+                    </Button>
+                  )
+                })}
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">

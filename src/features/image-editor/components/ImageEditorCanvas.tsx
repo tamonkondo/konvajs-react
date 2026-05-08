@@ -135,7 +135,7 @@ function EditableNode({ element, selected, overlayRootRef, onSelect, onElementCh
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter" && !event.shiftKey) {
+      if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
         closeTextarea(true)
       }
@@ -198,6 +198,8 @@ function EditableNode({ element, selected, overlayRootRef, onSelect, onElementCh
           text={element.text}
           fontSize={element.fontSize}
           fill={element.fill}
+          width={element.width}
+          align={element.align}
           fontStyle="bold"
           padding={4}
         />

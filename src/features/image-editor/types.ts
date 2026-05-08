@@ -1,4 +1,5 @@
 export type StampType = "star" | "heart" | "circle" | "arrow" | "label"
+export type TextAlign = "left" | "center" | "right"
 
 export type FilterState = {
   brightness: number
@@ -21,6 +22,8 @@ export type TextElement = BaseElement & {
   text: string
   fontSize: number
   fill: string
+  width: number
+  align: TextAlign
 }
 
 export type StampElement = BaseElement & {

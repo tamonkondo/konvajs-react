@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 
 import { DEFAULT_FILTERS, STAGE_SIZE } from "../constants"
-import type { EditorElement, FilterState, ImageAsset, StampElement, StampType, TextElement } from "../types"
+import type { EditorElement, FilterState, ImageAsset, StampElement, StampType, TextAlign, TextElement } from "../types"
 import { createElementId, readImageFile } from "../utils"
 
 type UpdateElementPayload = Partial<Omit<TextElement, "id" | "type"> & Omit<StampElement, "id" | "type">>
@@ -10,6 +10,8 @@ const DEFAULT_TEXT = {
   text: "New text",
   fontSize: 42,
   fill: "#111827",
+  width: 280,
+  align: "left" as TextAlign,
 }
 
 export function useImageEditor() {
@@ -20,6 +22,7 @@ export function useImageEditor() {
   const [textDraft, setTextDraft] = useState(DEFAULT_TEXT.text)
   const [textFill, setTextFill] = useState(DEFAULT_TEXT.fill)
   const [textSize, setTextSize] = useState(DEFAULT_TEXT.fontSize)
+  const [textAlign, setTextAlign] = useState<TextAlign>(DEFAULT_TEXT.align)
   const [stampFill, setStampFill] = useState("#ef4444")
   const [error, setError] = useState<string | null>(null)
 
@@ -59,6 +62,8 @@ export function useImageEditor() {
         y: STAGE_SIZE.height / 2 - 24,
         fontSize: textSize,
         fill: textFill,
+        width: DEFAULT_TEXT.width,
+        align: textAlign,
         rotation: 0,
         scaleX: 1,
         scaleY: 1,
@@ -149,11 +154,13 @@ export function useImageEditor() {
     textDraft,
     textFill,
     textSize,
+    textAlign,
     stampFill,
     setSelectedId,
     setTextDraft,
     setTextFill,
     setTextSize,
+    setTextAlign,
     setStampFill,
     uploadImage,
     updateFilters,
