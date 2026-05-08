@@ -6,8 +6,8 @@ import { EditorPage } from "./pages/editor/EditorPage"
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<EditorPage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/konvajs-react" element={<EditorPage />} />
+      <Route path="*" element={<Navigate to="/konvajs-react" replace />} />
     </Routes>
   )
 }
