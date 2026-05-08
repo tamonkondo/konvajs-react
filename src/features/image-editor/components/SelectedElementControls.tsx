@@ -69,6 +69,19 @@ export function SelectedElementControls({ selectedElement, onChange }: SelectedE
                   onValueChange={(fontSize) => onChange(selectedElement.id, { fontSize })}
                 />
               </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label>Line width</Label>
+                  <span className="text-xs tabular-nums text-muted-foreground">{Math.round(selectedElement.width)}px</span>
+                </div>
+                <Slider
+                  min={40}
+                  max={920}
+                  step={1}
+                  value={selectedElement.width}
+                  onValueChange={(width) => onChange(selectedElement.id, { width })}
+                />
+              </div>
             </>
           ) : null}
           <div className="space-y-1.5">

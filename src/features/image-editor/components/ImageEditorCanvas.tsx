@@ -64,6 +64,19 @@ function EditableNode({ element, selected, overlayRootRef, onSelect, onElementCh
   function handleTransformEnd() {
     const node = nodeRef.current
     if (!node) return
+
+    if (element.type === "text" && node instanceof Konva.Text) {
+      onElementChange(element.id, {
+        x: node.x(),
+        y: node.y(),
+        width: node.width(),
+        rotation: node.rotation(),
+        scaleX: 1,
+        scaleY: node.scaleY(),
+      })
+      return
+    }
+
     onElementChange(element.id, {
       x: node.x(),
       y: node.y(),
@@ -71,6 +84,15 @@ function EditableNode({ element, selected, overlayRootRef, onSelect, onElementCh
       scaleX: node.scaleX(),
       scaleY: node.scaleY(),
     })
+  }
+
+  function handleTransform() {
+    const node = nodeRef.current
+    if (element.type !== "text" || !(node instanceof Konva.Text)) return
+
+    const nextWidth = Math.max(node.width() * node.scaleX(), 40)
+    node.width(nextWidth)
+    node.scaleX(1)
   }
 
   function handleTextEdit() {
@@ -94,29 +116,35 @@ function EditableNode({ element, selected, overlayRootRef, onSelect, onElementCh
     textarea.style.top = `${textPosition.y}px`
     textarea.style.left = `${textPosition.x}px`
     textarea.style.width = `${Math.max(textNode.width() * textNode.scaleX(), 40)}px`
-    textarea.style.height = `${Math.max(textNode.height() * textNode.scaleY(), 24)}px`
+    textarea.style.height = `${Math.max(textNode.height() * textNode.scaleY(), textNode.fontSize() * textNode.lineHeight())}px`
+    textarea.style.boxSizing = "border-box"
     textarea.style.fontSize = `${textNode.fontSize() * textNode.scaleY()}px`
     textarea.style.fontFamily = textNode.fontFamily()
+    textarea.style.fontStyle = textNode.fontStyle().includes("italic") ? "italic" : "normal"
     textarea.style.fontWeight = textNode.fontStyle().includes("bold") ? "700" : "400"
-    textarea.style.lineHeight = String(textNode.lineHeight())
+    textarea.style.lineHeight = `${textNode.fontSize() * textNode.lineHeight() * textNode.scaleY()}px`
     textarea.style.color = String(textNode.fill())
     textarea.style.textAlign = textNode.align()
-    textarea.style.border = "1px solid hsl(0 0% 75%)"
+    textarea.style.border = "1px dashed hsl(210 100% 55% / 0.75)"
     textarea.style.borderRadius = "4px"
-    textarea.style.padding = "2px"
+    textarea.style.padding = "0"
     textarea.style.margin = "0"
     textarea.style.overflow = "hidden"
-    textarea.style.background = "white"
+    textarea.style.background = "transparent"
     textarea.style.outline = "none"
     textarea.style.pointerEvents = "auto"
     textarea.style.resize = "none"
+    textarea.style.whiteSpace = "pre-wrap"
+    textarea.style.wordBreak = "normal"
+    textarea.style.overflowWrap = "break-word"
     textarea.style.transformOrigin = "left top"
     textarea.style.transform = textNode.rotation() ? `rotateZ(${textNode.rotation()}deg)` : ""
     textarea.style.zIndex = "50"
+    textarea.rows = Math.max(textarea.value.split("\n").length, 1)
 
     const resizeTextarea = () => {
-      textarea.style.height = "auto"
-      textarea.style.height = `${textarea.scrollHeight + 4}px`
+      const renderedHeight = textNode.height() * textNode.scaleY()
+      textarea.style.height = `${Math.max(renderedHeight, textarea.scrollHeight)}px`
     }
 
     const closeTextarea = (save: boolean) => {
@@ -158,7 +186,6 @@ function EditableNode({ element, selected, overlayRootRef, onSelect, onElementCh
     textarea.addEventListener("click", handleTextareaClick)
     resizeTextarea()
     textarea.focus()
-    textarea.select()
 
     window.setTimeout(() => {
       window.addEventListener("click", handleOutsideClick)
@@ -182,6 +209,7 @@ function EditableNode({ element, selected, overlayRootRef, onSelect, onElementCh
       })
     },
     onTransformEnd: handleTransformEnd,
+    onTransform: handleTransform,
   }
 
   return (
@@ -216,7 +244,11 @@ function EditableNode({ element, selected, overlayRootRef, onSelect, onElementCh
         <Transformer
           ref={transformerRef}
           rotateEnabled
-          enabledAnchors={["top-left", "top-right", "bottom-left", "bottom-right"]}
+          enabledAnchors={
+            element.type === "text"
+              ? ["middle-left", "middle-right", "top-left", "top-right", "bottom-left", "bottom-right"]
+              : ["top-left", "top-right", "bottom-left", "bottom-right"]
+          }
           boundBoxFunc={(oldBox, newBox) => {
             if (newBox.width < 12 || newBox.height < 12) return oldBox
             return newBox
